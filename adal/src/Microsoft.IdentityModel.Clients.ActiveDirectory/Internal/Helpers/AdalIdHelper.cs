@@ -72,24 +72,26 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory.Internal.Helpers
 
         public static IDictionary<string, string> GetAdalIdParameters()
         {
+            IPlatformProxy platformProxy = new PlatformProxy();
+
             var parameters = new Dictionary<string, string>();
 
             parameters[AdalIdParameter.Product] = new PlatformInformation().GetProductName();
             parameters[AdalIdParameter.Version] = GetAdalVersion();
 
-            var processorInfo = PlatformProxy.GetProcessorArchitecture();
+            var processorInfo = platformProxy.GetProcessorArchitecture();
             if (processorInfo != null)
             {
                 parameters[AdalIdParameter.CpuPlatform] = processorInfo;
             }
 
-            var osInformation = PlatformProxy.GetOperatingSystem();
+            var osInformation = platformProxy.GetOperatingSystem();
             if (osInformation != null)
             {
                 parameters[AdalIdParameter.OS] = osInformation;
             }
 
-            var deviceInformation = PlatformProxy.GetDeviceModel();
+            var deviceInformation = platformProxy.GetDeviceModel();
             if (deviceInformation != null)
             {
                 parameters[AdalIdParameter.DeviceModel] = deviceInformation;

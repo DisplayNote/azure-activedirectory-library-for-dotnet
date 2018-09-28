@@ -34,34 +34,33 @@ namespace Microsoft.Identity.Core
     /// Platform / OS specific logic.
     /// </summary>
     [Android.Runtime.Preserve(AllMembers = true)]
-    internal class PlatformProxy
+    internal class PlatformProxy : IPlatformProxy
     {
         /// <summary>
         /// Get the user logged in 
         /// </summary>
         /// <returns>The username or throws</returns>
-        public static async Task<string> GetUserPrincipalNameAsync()
+        public async Task<string> GetUserPrincipalNameAsync()
         {
             return await Task.Factory.StartNew(() => string.Empty).ConfigureAwait(false);
 
         }
-        public static async Task<bool> IsUserLocalAsync(RequestContext requestContext)
+        public async Task<bool> IsUserLocalAsync(RequestContext requestContext)
         {
             return await Task.Factory.StartNew(() => false).ConfigureAwait(false);
         }
 
-        public static bool IsDomainJoined()
+        public bool IsDomainJoined()
         {
             return false;
         }
 
-
-        public static string GetEnvironmentVariable(string variable)
+        public string GetEnvironmentVariable(string variable)
         {
             return null;
         }
 
-        public static string GetProcessorArchitecture()
+        public string GetProcessorArchitecture()
         {
             if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
             {
@@ -77,12 +76,12 @@ namespace Microsoft.Identity.Core
             return null;
         }
 
-        public static string GetOperatingSystem()
+        public string GetOperatingSystem()
         {
             return Android.OS.Build.VERSION.Sdk;
         }
 
-        public static string GetDeviceModel()
+        public string GetDeviceModel()
         {
             return Android.OS.Build.Model;
         }

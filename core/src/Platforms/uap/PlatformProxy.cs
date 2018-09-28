@@ -41,7 +41,7 @@ namespace Microsoft.Identity.Core
     /// <summary>
     /// Platform / OS specific logic. No library (ADAL / MSAL) specific code should go in here. 
     /// </summary>
-    internal class PlatformProxy
+    internal class PlatformProxy : IPlatformProxy
     {
         /// <summary>
         /// Get the user logged in to Windows or throws
@@ -51,7 +51,7 @@ namespace Microsoft.Identity.Core
         /// select the first principal name that can be used
         /// </remarks>
         /// <returns>The username or throws</returns>
-        public static async Task<string> GetUserPrincipalNameAsync()
+        public async Task<string> GetUserPrincipalNameAsync()
         {
             IReadOnlyList<User> users = await User.FindAllAsync();
             if (users == null || !users.Any())
@@ -108,37 +108,37 @@ namespace Microsoft.Identity.Core
 
         }
 
-        public static async Task<bool> IsUserLocalAsync(RequestContext requestContext)
+        public async Task<bool> IsUserLocalAsync(RequestContext requestContext)
         {
             IReadOnlyList<User> users = await User.FindAllAsync();
             return users.Any(u => u.Type == UserType.LocalUser || u.Type == UserType.LocalGuest);
         }
 
-        public static bool IsDomainJoined()
+        public bool IsDomainJoined()
         {
             return NetworkInformation.GetHostNames().Any(entry => entry.Type == HostNameType.DomainName);
         }
 
 
-        public static string GetEnvironmentVariable(string variable)
+        public string GetEnvironmentVariable(string variable)
         {
             ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
             return localSettings.Values.ContainsKey(variable) ? localSettings.Values[variable].ToString() : null;
         }
 
-        public static string GetProcessorArchitecture()
+        public string GetProcessorArchitecture()
         {
             return WindowsNativeMethods.GetProcessorArchitecture();
         }
 
-        public static string GetOperatingSystem()
+        public string GetOperatingSystem()
         {
             // In WinRT, there is no way to reliably get OS version. All can be done reliably is to check 
             // for existence of specific features which does not help in this case, so we do not emit OS in WinRT.
             return null;
         }
 
-        public static string GetDeviceModel()
+        public string GetDeviceModel()
         {
             var deviceInformation = new Windows.Security.ExchangeActiveSyncProvisioning.EasClientDeviceInformation();
             return deviceInformation.SystemProductName;

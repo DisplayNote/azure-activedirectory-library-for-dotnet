@@ -38,18 +38,13 @@ namespace Microsoft.Identity.Core
     /// <summary>
     /// Platform / OS specific logic.
     /// </summary>
-    internal class PlatformProxy
+    internal class PlatformProxy : IPlatformProxy
     {
-    
-        public static object MsalError { get; private set; }
-
-
-
         /// <summary>
         /// Get the user logged in to Windows or throws
         /// </summary>
         /// <returns>Upn or throws</returns>
-        public static async Task<string> GetUserPrincipalNameAsync()
+        public async Task<string> GetUserPrincipalNameAsync()
         {
             // TODO: there is discrepancy between the implementation of this method on net45 - throws if upn not found - and uap and 
             // the rest of the platforms - returns "" 
@@ -62,8 +57,8 @@ namespace Microsoft.Identity.Core
                 if (userNameSize == 0)
                 {
                     throw CoreExceptionFactory.Instance.GetClientException(
-                        CoreErrorCodes.GetUserNameFailed, 
-                        CoreErrorMessages.GetUserNameFailed, 
+                        CoreErrorCodes.GetUserNameFailed,
+                        CoreErrorMessages.GetUserNameFailed,
                         new Win32Exception(Marshal.GetLastWin32Error()));
                 }
 
@@ -81,7 +76,7 @@ namespace Microsoft.Identity.Core
         }
 
 
-        public static async Task<bool> IsUserLocalAsync(RequestContext requestContext)
+        public async Task<bool> IsUserLocalAsync(RequestContext requestContext)
         {
             return await Task.Factory.StartNew(() =>
             {
@@ -96,7 +91,7 @@ namespace Microsoft.Identity.Core
             }).ConfigureAwait(false);
         }
 
-        public static bool IsDomainJoined()
+        public bool IsDomainJoined()
         {
             if (!IsWindows)
                 return false;
@@ -127,13 +122,13 @@ namespace Microsoft.Identity.Core
         }
 
 
-        public static string GetEnvironmentVariable(string variable)
+        public string GetEnvironmentVariable(string variable)
         {
             string value = Environment.GetEnvironmentVariable(variable);
             return !string.IsNullOrWhiteSpace(value) ? value : null;
         }
 
-        public static string GetProcessorArchitecture()
+        public string GetProcessorArchitecture()
         {
             if (IsWindows)
                 return WindowsNativeMethods.GetProcessorArchitecture();
@@ -141,18 +136,18 @@ namespace Microsoft.Identity.Core
                 return null;
         }
 
-        public static string GetOperatingSystem()
+        public string GetOperatingSystem()
         {
             return Environment.OSVersion.ToString();
         }
 
-        public static string GetDeviceModel()
+        public string GetDeviceModel()
         {
             // Since MSAL .NET may be used on servers, for security reasons, we do not emit device type.
             return null;
         }
 
-        private static bool IsWindows
+        private bool IsWindows
         {
             get
             {
