@@ -25,36 +25,66 @@
 //
 //------------------------------------------------------------------------------
 
-using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Microsoft.Identity.Core
 {
-    internal abstract class CorePlatformInformationBase
+    /// <summary>
+    /// Platform / OS specific logic.
+    /// </summary>
+    [Android.Runtime.Preserve(AllMembers = true)]
+    internal class PlatformProxy
     {
-        public static CorePlatformInformationBase Instance { get; set; }
-
-        public const string DefaultRedirectUri = "urn:ietf:wg:oauth:2.0:oob";
-        public abstract string GetProductName();
-
-        public abstract string GetAssemblyFileVersionAttribute();
-
-        public virtual void ValidateRedirectUri(Uri redirectUri, RequestContext requestContext)
+        /// <summary>
+        /// Get the user logged in 
+        /// </summary>
+        /// <returns>The username or throws</returns>
+        public static async Task<string> GetUserPrincipalNameAsync()
         {
-            if (redirectUri == null)
+            return await Task.Factory.StartNew(() => string.Empty).ConfigureAwait(false);
+
+        }
+        public static async Task<bool> IsUserLocalAsync(RequestContext requestContext)
+        {
+            return await Task.Factory.StartNew(() => false).ConfigureAwait(false);
+        }
+
+        public static bool IsDomainJoined()
+        {
+            return false;
+        }
+
+
+        public static string GetEnvironmentVariable(string variable)
+        {
+            return null;
+        }
+
+        public static string GetProcessorArchitecture()
+        {
+            if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
             {
-                throw new ArgumentNullException(nameof(redirectUri));
+                return Android.OS.Build.CpuAbi;
             }
+
+            IList<string> supportedABIs = Android.OS.Build.SupportedAbis;
+            if (supportedABIs != null && supportedABIs.Count > 0)
+            {
+                return supportedABIs[0];
+            }
+
+            return null;
         }
 
-        public virtual string GetRedirectUriAsString(Uri redirectUri, RequestContext requestContext)
+        public static string GetOperatingSystem()
         {
-            return redirectUri.OriginalString;
+            return Android.OS.Build.VERSION.Sdk;
         }
 
-        public virtual string GetDefaultRedirectUri(string correlationId)
+        public static string GetDeviceModel()
         {
-            return DefaultRedirectUri;
+            return Android.OS.Build.Model;
         }
     }
 }

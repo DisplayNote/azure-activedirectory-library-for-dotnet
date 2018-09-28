@@ -52,7 +52,7 @@ namespace Microsoft.Identity.Core.WsTrust
         public async Task<string> GetPlatformUserAsync()
         {
             var logger = this.requestContext.Logger;
-            string platformUsername = await CorePlatformInformationBase.Instance.GetUserPrincipalNameAsync().ConfigureAwait(false);
+            string platformUsername = await PlatformProxy.GetUserPrincipalNameAsync().ConfigureAwait(false);
             string msg;
             if (string.IsNullOrWhiteSpace(platformUsername))
             {

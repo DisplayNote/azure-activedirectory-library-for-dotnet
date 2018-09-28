@@ -25,16 +25,54 @@
 //
 //------------------------------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 
-namespace Microsoft.IdentityModel.Clients.ActiveDirectory.Internal.Platform
+namespace Microsoft.Identity.Core
 {
-    internal class PlatformInformation : PlatformInformationBase
+    /// <summary>
+    /// Platform / OS specific logic.  No library (ADAL / MSAL) specific code should go in here. 
+    /// </summary>
+    internal class PlatformProxy
     {
-        public override string GetProductName()
+        /// <summary>
+        /// Get the user logged in 
+        /// </summary>
+        public static async Task<string> GetUserPrincipalNameAsync()
+        {
+            return await Task.Factory.StartNew(() => string.Empty).ConfigureAwait(false);
+
+        }
+
+        public static async Task<bool> IsUserLocalAsync(RequestContext requestContext)
+        {
+            return await Task.Factory.StartNew(() => false).ConfigureAwait(false);
+        }
+
+        public static bool IsDomainJoined()
+        {
+            return false;
+        }
+
+        public static string GetEnvironmentVariable(string variable)
         {
             return null;
         }
+
+        public static string GetProcessorArchitecture()
+        {
+            return null;
+        }
+
+        public static string GetOperatingSystem()
+        {
+            return null;
+        }
+
+        public static string GetDeviceModel()
+        {
+            return null;
+        }
+
+
     }
 }

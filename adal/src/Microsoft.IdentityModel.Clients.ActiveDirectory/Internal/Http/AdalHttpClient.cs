@@ -200,7 +200,7 @@ namespace Microsoft.IdentityModel.Clients.ActiveDirectory.Internal.Http
 
         private static string CheckForExtraQueryParameter(string url)
         {
-            string extraQueryParameter = new PlatformInformation().GetEnvironmentVariable("ExtraQueryParameter");
+            string extraQueryParameter = PlatformProxy.GetEnvironmentVariable("ExtraQueryParameter");
             string delimiter = (url.IndexOf('?') > 0) ? "&" : "?";
             if (!string.IsNullOrWhiteSpace(extraQueryParameter))
             {
