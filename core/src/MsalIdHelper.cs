@@ -85,7 +85,7 @@ namespace Microsoft.Identity.Core
                 [MsalIdParameter.Version] = GetMsalVersion()
             };
 
-            IPlatformProxy platformProxy = PlatformProxyFactory.GetPlatformProxy();
+            IPlatformProxy platformProxy = new PlatformProxyFactory().GetOrCreatePlatformProxy();
 
             var processorInformation = platformProxy.GetProcessorArchitecture();
             if (processorInformation != null)

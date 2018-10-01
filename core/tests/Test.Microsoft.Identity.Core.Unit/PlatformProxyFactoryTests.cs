@@ -25,40 +25,26 @@
 //
 //------------------------------------------------------------------------------
 
-namespace Microsoft.Identity.Core
+using Microsoft.Identity.Core;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Test.Microsoft.Identity.Core.Unit
 {
-    /// <summary>
-    /// Returns the platform / os specific implementation of a PlatformProxy. 
-    /// </summary>
-    internal class PlatformProxyFactory
+    [TestClass]
+    public class PlatformProxyFactoryTests
     {
-        private IPlatformProxy _platformProxy;
-
-        /// <summary>
-        /// Gets the platform proxy, which can be used to perform platform specific operations
-        /// </summary>
-        public IPlatformProxy GetOrCreatePlatformProxy()
+        [TestMethod]
+        public void PlatformProxyFactoryCachesTheProxy()
         {
-            if (_platformProxy == null)
-            {
-#if NET_CORE
-                _platformProxy = new NetCorePlatformProxy();
-#elif ANDROID
-                _platformProxy = new AndroidPlatformProxy();
-#elif iOS
-                _platformProxy = new iOSPlatformProxy();
-#elif WINDOWS_APP
-                _platformProxy = new UapPlatformProxy();
-#elif FACADE
-                _platformProxy = new NetStandard11PlatformProxy();
-#elif NETSTANDARD1_3
-                _platformProxy = new Netstandard13PlatformProxy();
-#elif DESKTOP
-                _platformProxy = new NetDesktopPlatformProxy();
-#endif
-            }
+            // Arrange
+            PlatformProxyFactory proxyFactory = new PlatformProxyFactory();
 
-            return _platformProxy;
+            // Act 
+            var proxy1 = proxyFactory.GetOrCreatePlatformProxy();
+            var proxy2 = proxyFactory.GetOrCreatePlatformProxy();
+
+            // Assert
+            Assert.IsTrue(proxy1 == proxy2);
         }
     }
 }
