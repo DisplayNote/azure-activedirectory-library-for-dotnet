@@ -25,6 +25,8 @@
 //
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace Microsoft.Identity.Core
 {
     /// <summary>
@@ -32,33 +34,33 @@ namespace Microsoft.Identity.Core
     /// </summary>
     internal class PlatformProxyFactory
     {
-        private IPlatformProxy _platformProxy;
+        private PlatformProxyFactory() { }
+
+        // thread safety ensured by implicit LazyThreadSafetyMode.ExecutionAndPublication
+        private static readonly Lazy<IPlatformProxy> _platformProxyLazy = new Lazy<IPlatformProxy>(() =>
+#if NET_CORE
+            new NetCorePlatformProxy()
+#elif ANDROID
+            new AndroidPlatformProxy()
+#elif iOS
+            new iOSPlatformProxy()
+#elif WINDOWS_APP
+            new UapPlatformProxy()
+#elif FACADE
+            new NetStandard11PlatformProxy()
+#elif NETSTANDARD1_3
+            new Netstandard13PlatformProxy()
+#elif DESKTOP
+            new NetDesktopPlatformProxy()
+#endif
+        );
 
         /// <summary>
         /// Gets the platform proxy, which can be used to perform platform specific operations
         /// </summary>
-        public IPlatformProxy GetOrCreatePlatformProxy()
+        public static IPlatformProxy GetPlatformProxy()
         {
-            if (_platformProxy == null)
-            {
-#if NET_CORE
-                _platformProxy = new NetCorePlatformProxy();
-#elif ANDROID
-                _platformProxy = new AndroidPlatformProxy();
-#elif iOS
-                _platformProxy = new iOSPlatformProxy();
-#elif WINDOWS_APP
-                _platformProxy = new UapPlatformProxy();
-#elif FACADE
-                _platformProxy = new NetStandard11PlatformProxy();
-#elif NETSTANDARD1_3
-                _platformProxy = new Netstandard13PlatformProxy();
-#elif DESKTOP
-                _platformProxy = new NetDesktopPlatformProxy();
-#endif
-            }
-
-            return _platformProxy;
+            return _platformProxyLazy.Value;
         }
     }
 }

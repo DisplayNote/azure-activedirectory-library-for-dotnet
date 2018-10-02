@@ -36,12 +36,9 @@ namespace Test.Microsoft.Identity.Core.Unit
         [TestMethod]
         public void PlatformProxyFactoryCachesTheProxy()
         {
-            // Arrange
-            PlatformProxyFactory proxyFactory = new PlatformProxyFactory();
-
             // Act 
-            var proxy1 = proxyFactory.GetOrCreatePlatformProxy();
-            var proxy2 = proxyFactory.GetOrCreatePlatformProxy();
+            var proxy1 = PlatformProxyFactory.GetPlatformProxy();
+            var proxy2 = PlatformProxyFactory.GetPlatformProxy();
 
             // Assert
             Assert.IsTrue(proxy1 == proxy2);
